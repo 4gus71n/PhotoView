@@ -20,6 +20,7 @@ import android.graphics.Matrix;
 import android.graphics.Matrix.ScaleToFit;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
 import android.support.v4.view.MotionEventCompat;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -469,7 +470,7 @@ public class PhotoViewAttacher implements View.OnTouchListener,
                 animate);
     }
 
-    public void setScale(float scale, float focalX, float focalY,
+    public void setScale(final float scale, final float focalX, final float focalY,
                          boolean animate) {
         // Check to see if the scale is within bounds
         if (scale < mMinScale || scale > mMaxScale) {
@@ -480,8 +481,13 @@ public class PhotoViewAttacher implements View.OnTouchListener,
             mImageView.post(new AnimatedZoomRunnable(getScale(), scale,
                     focalX, focalY));
         } else {
-            mSuppMatrix.setScale(scale, scale, focalX, focalY);
-            checkAndDisplayMatrix();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mSuppMatrix.setScale(scale, scale, focalX, focalY);
+                    checkAndDisplayMatrix();
+                }
+            }, 300);
         }
     }
 
